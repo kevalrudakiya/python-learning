@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id           String            @id @default(uuid())
+  email        String            @unique
+  name         String
+  mobile       String?
+  passwordHash String
+  role         String            @default("SENDER") // SUPER_ADMIN, SENDER
+  status       String            @default("ACTIVE") // ACTIVE, DISABLED
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  images       Image[]
+  sessions     TrackingSession[]
+  auditLogs    AuditLog[]
+}
+
+model Image {
+  id            String            @id @default(uuid())
+  userId        String
+  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title         String
+  description   String?
+  campaign      String?
+  recipientName String?
+  internalNotes String?
+  fileUrl       String
+  mimeType      String            @default("image/png")
+  createdAt     DateTime          @default(now())
+  sessions      TrackingSession[]
+}
+
+model TrackingSession {
+  id                String          @id @default(uuid())
+  userId            String
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  imageId           String
+  image             Image           @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  publicSessionId   String          @unique
+  secureToken       String          @unique
+  recipientLabel    String
+  purpose           String?
+  durationMinutes   Int             @default(60)
+  status            String          @default("CREATED") 
+  // CREATED, OPENED, CONSENT_PENDING, LOCATION_ALLOWED, LOCATION_DENIED, TRACKING_ACTIVE, TRACKING_STOPPED, EXPIRED
+  openedAt          DateTime?
+  consentAt         DateTime?
+  trackingStartedAt DateTime?
+  trackingStoppedAt DateTime?
+  expiresAt         DateTime
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  locationPoints    LocationPoint[]
+  consentLogs       ConsentLog[]
+}
+
+model LocationPoint {
+  id                String          @id @default(uuid())
+  trackingSessionId String
+  trackingSession   TrackingSession @relation(fields: [trackingSessionId], references: [id], onDelete: Cascade)
+  latitude          Float
+  longitude         Float
+  accuracy          Float
+  speed             Float?
+  heading           Float?
+  timestamp         DateTime        @default(now())
+}
+
+model ConsentLog {
+  id                String          @id @default(uuid())
+  trackingSessionId String
+  trackingSession   TrackingSession @relation(fields: [trackingSessionId], references: [id], onDelete: Cascade)
+  consentType       String          @default("GEOLOCATION_LIVE")
+  consentStatus     String          // GRANTED, DECLINED, REVOKED
+  ipHash            String?
+  userAgent         String?
+  createdAt         DateTime        @default(now())
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action     String
+  entityType String
+  entityId   String?
+  details    String?
+  createdAt  DateTime @default(now())
+}
+
+model AppSettings {
+  id                     String   @id @default("default")
+  defaultDurationMinutes Int      @default(60)
+  maxDurationMinutes     Int      @default(1440)
+  locationRetentionDays  Int      @default(30)
+  imageRetentionDays     Int      @default(90)
+  maxFileSizeMb          Int      @default(10)
+  allowQrSharing         Boolean  @default(true)
+  allowWhatsappSharing   Boolean  @default(true)
+  enable2FA              Boolean  @default(false)
+  mapProvider            String   @default("OpenStreetMap")
+  privacyPolicyText      String   @default("Location sharing requires explicit consent. Your position is tracked only when actively permitted and can be stopped at any time.")
+  updatedAt              DateTime @updatedAt
+}

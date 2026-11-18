@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#18181b"/>
+  <rect x="200" y="150" width="400" height="300" rx="12" fill="#d97706" stroke="#f59e0b" stroke-width="4"/>
+  <line x1="200" y1="300" x2="600" y2="300" stroke="#b45309" stroke-width="4"/>
+  <rect x="360" y="200" width="80" height="100" fill="#fef3c7" rx="4"/>
+  <path d="M 370 220 L 430 220 M 370 240 L 430 240 M 370 260 L 410 260" stroke="#d97706" stroke-width="3"/>
+  <text x="400" y="400" font-family="sans-serif" font-size="24" fill="#ffffff" font-weight="bold" text-anchor="middle">PRIORITY EXPRESS SHIPMENT</text>
+  <text x="400" y="550" font-family="sans-serif" font-size="18" fill="#a1a1aa" text-anchor="middle">CARGO TRACKING ID: #LOG-88992-SECURE</text>
+</svg>

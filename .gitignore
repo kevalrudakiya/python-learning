@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+.venv/
+venv/
+
+# Build and packaging
+build/
+dist/
+*.spec
+
+# Editors and IDEs
+.idea/
+.vscode/
+
+# Next.js / Node
+smart-image-tracker/node_modules/
+smart-image-tracker/.next/
+smart-image-tracker/.env*
+
+# OS files
+Thumbs.db
+.DS_Store
